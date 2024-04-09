@@ -16,6 +16,7 @@ def main():
     placa01.addSensor(mq7)
     placa01.addSensor(mq135)
     
-    placa01.run()
+    # placa01.run()
+    placa01.economicRun()
     
 main()

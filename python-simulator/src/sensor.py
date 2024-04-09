@@ -18,7 +18,7 @@ class Sensor:
         self.valorMaximo = valorMaximo
         self.valor = valor
         
-        db = conexao.Conexao('user', 'password', 'host', 'database')
+        db = conexao.Conexao('user', 'senha', 'host', 'database')
         
         query = f"INSERT INTO tbsensor (unidadeMedida, modelo, dataInstalacao, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}', '{self.dataInstalacao}', {self.fkVeiculo});"
         
@@ -59,7 +59,7 @@ class Sensor:
         
         self.lastCaptureAt = datetime.now()
         
-        db = conexao.Conexao('user', 'password', 'host', 'database')
+        db = conexao.Conexao('user', 'senha', 'host', 'database')
         
         query = f"INSERT INTO tbdadossensor (registro, dtColeta, fkSensor) VALUES ('{self.valor}', '{self.lastCaptureAt}', '{self.idSensor}');"
         

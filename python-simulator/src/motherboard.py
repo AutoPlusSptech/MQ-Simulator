@@ -5,6 +5,8 @@ import azure.iot.hub as iotHub
 import azure.iot.device as iotDevice
 import random
 import time
+import zlib
+import re
 
 class Motherboard:
         
@@ -18,6 +20,18 @@ class Motherboard:
             
         def addSensor(self, sensor):
             self.sensores.append(sensor)
+            
+        def compress(self, message):
+            msgJson = json.dumps(message)
+            msgJson = re.sub(r'\s', '', msgJson)
+            msgBytes = bytes(msgJson.encode('utf-8'))
+            msgCompressed = zlib.compress(msgBytes)
+            return msgCompressed
+        
+        def descompress(self, message):
+            msgDecompressed = zlib.decompress(message)
+            msgJson = json.loads(msgDecompressed)
+            return msgJson
             
         def simulate(self):
             listData = []
@@ -64,3 +78,42 @@ class Motherboard:
                 self.simulate()
                 
                 time.sleep(60)
+                
+        def economicRun(self):
+            while True:
+                listData = []
+                listIdSensor = []
+                for x in self.sensores:
+                    x.generateValue()
+                    x.sendValueDb()
+                    listData.append(x.valor)
+                    listIdSensor.append(x.idSensor)
+                    
+                    
+                self.messageId += 1
+                
+                message = {
+                    'm': self.messageId,
+                    'v': self.sensores[0].fkVeiculo,
+                    's': listIdSensor,
+                    'r': listData,
+                    'b': self.bateria
+                }
+                
+                jsonMessage = json.dumps(message)
+                
+                print(f'Mensagen: {jsonMessage}')
+                print(f'Bytes Mensagem: {sys.getsizeof(jsonMessage)}\n')
+                
+                msgCompressed = self.compress(jsonMessage)
+                
+                print(f'Mensagem Comprimida: {msgCompressed}')
+                print(f'Bytes Mensagem Comprimida: {sys.getsizeof(msgCompressed)}\n')
+                
+                msgDecompressed = self.descompress(msgCompressed)
+                
+                print(f'Mensagem Descomprimida: {msgDecompressed}')
+                print(f'Bytes Mensagem Descomprimida: {sys.getsizeof(msgDecompressed)}\n')
+                
+                
+                time.sleep(10)
