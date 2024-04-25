@@ -57,7 +57,7 @@ class Sensor:
                 novoValor = self.valor - valorGerado * multiplicador
         
         if "DHT-11" in self.modelo:
-            valorGerado = random.random() * 100
+            valorGerado = random.random()
             
             multiplicador = 2
 
