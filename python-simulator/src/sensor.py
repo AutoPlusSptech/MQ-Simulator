@@ -9,7 +9,7 @@ import struct
 
 class Sensor:
     
-    def __init__(self, unidadeMedida, modelo, dataInstalacao, fkVeiculo, valorMinimo, valorMaximo, valor, lastCaptureAt = None, idSensor = None, messageId = 0):
+    def __init__(self, unidadeMedida, modelo, dataInstalacao, fkVeiculo, valorMinimo, valorMaximo, valor, area, lastCaptureAt = None, idSensor = None, messageId = 0, deterioracao = [False, False]):
         self.unidadeMedida = unidadeMedida
         self.modelo = modelo
         self.dataInstalacao = dataInstalacao
@@ -17,36 +17,62 @@ class Sensor:
         self.valorMinimo = valorMinimo
         self.valorMaximo = valorMaximo
         self.valor = valor
+        self.area = area
+        self.deterioracao = [False, False]
         
-        db = conexao.Conexao('user', 'senha', 'host', 'database')
+        # db = conexao.Conexao('user', 'senha', 'host', 'database')
         
-        query = f"INSERT INTO tbsensor (unidadeMedida, modelo, dataInstalacao, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}', '{self.dataInstalacao}', {self.fkVeiculo});"
+        # query = f"INSERT INTO tbsensor (unidadeMedida, modelo, dataInstalacao, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}', '{self.dataInstalacao}', {self.fkVeiculo});"
         
-        print(f'Query: {query}')
+        # print(f'Query: {query}')
         
-        db.insert(query)
-        self.idSensor = db.getLastId()
-        db.close()
+        # db.insert(query)
+        # self.idSensor = db.getLastId()
+        # db.close()
+
+        self.idSensor = 1
         
     def generateValue(self):
-        
+
         multiplicador = 1
-        
-        if self.valorMaximo > 100:
-            valorGerado = random.randint(1, 35)
-        else:
-            valorGerado = random.randint(1, 10)
-            
-        deterioracao = random.randint(1, 1000)
+
+        deterioracaoMotor = random.randint(1, 100)
+        deterioracaoPneu = random.randint(1, 100)
         upOrDown = random.randint(1, 2)
-        
-        if deterioracao == 67:
-            multiplicador = 5
+
+        if "MQ" in self.modelo:
+            if self.valorMaximo > 100:
+                valorGerado = random.randint(1, 35)
+            else:
+                valorGerado = random.randint(1, 10)
+
+            if deterioracaoMotor == 67:
+                multiplicador = 5
+
+                
             
-        if upOrDown == 1:
-            novoValor = self.valor + valorGerado * multiplicador
-        else:
-            novoValor = self.valor - valorGerado * multiplicador
+            if upOrDown == 1:
+                novoValor = self.valor + valorGerado * multiplicador
+            else:
+                novoValor = self.valor - valorGerado * multiplicador
+        
+        if "DHT-11" in self.modelo:
+            valorGerado = random.random() * 100
+            
+            multiplicador = 2
+
+            if upOrDown == 1:
+                novoValor = self.valor + valorGerado * multiplicador
+            else:
+                novoValor = self.valor - valorGerado * multiplicador
+
+            novoValor = round(novoValor, 1)
+        
+        for x in self.deterioracao:
+
+            print(self.deterioracao.index(x))
+
+        print(self.deterioracao)
             
         if novoValor > self.valorMaximo:
             novoValor = self.valorMaximo

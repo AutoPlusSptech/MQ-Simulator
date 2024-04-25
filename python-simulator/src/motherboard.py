@@ -15,8 +15,8 @@ class Motherboard:
             self.bateria = 100
             self.messageId = 0
             self.deviceId = 'DeviceId'
-            self.registry = iotDevice.IoTHubDeviceClient.create_from_connection_string('DevicePrimaryConnectionString')
-            self.registry.connect()
+            # self.registry = iotDevice.IoTHubDeviceClient.create_from_connection_string('DevicePrimaryConnectionString')
+            # self.registry.connect()
             
         def addSensor(self, sensor):
             self.sensores.append(sensor)
@@ -85,7 +85,7 @@ class Motherboard:
                 listIdSensor = []
                 for x in self.sensores:
                     x.generateValue()
-                    x.sendValueDb()
+                    # x.sendValueDb()
                     listData.append(x.valor)
                     listIdSensor.append(x.idSensor)
                     
@@ -116,4 +116,4 @@ class Motherboard:
                 print(f'Bytes Mensagem Descomprimida: {sys.getsizeof(msgDecompressed)}\n')
                 
                 
-                time.sleep(10)
+                time.sleep(1)
