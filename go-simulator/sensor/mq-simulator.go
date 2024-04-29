@@ -6,13 +6,13 @@ import (
 )
 
 type Sensor struct {
-	idSensor       int
-	unidadeMedida  string
-	modelo         string
-	dataInstalacao string
-	fkVeiculo      int
-	valorMinimo    int
-	valorMaximo    int
+	IdSensor       int
+	UnidadeMedida  string
+	Modelo         string
+	DataInstalacao string
+	FkVeiculo      int
+	ValorMinimo    int
+	ValorMaximo    int
 }
 
 func randomRange(min, max int) int {
@@ -20,33 +20,33 @@ func randomRange(min, max int) int {
 	return valor
 }
 
-func simulate(lastValue int, sensor Sensor) int {
+func Simulate(lastValue int, sensor Sensor) int {
 
 	newValue := 0
-	criticality := randomRange(1, 1000)
+	deterioration := randomRange(1, 1000)
 	upOrDown := randomRange(0, 1)
 	multiplier := 1
 
-	if criticality == 67 {
+	if deterioration == 67 {
 		multiplier = 5
-		fmt.Println("Criticidade!")
+		fmt.Println("Deterioração!")
 	}
 
-	if sensor.valorMaximo > 100 {
+	if sensor.ValorMaximo > 100 {
 		newValue = randomRange(1, 35)
 	} else {
 		newValue = randomRange(1, 10)
 	}
 
 	if upOrDown == 0 {
-		if lastValue-newValue*multiplier < sensor.valorMinimo {
-			lastValue = sensor.valorMinimo
+		if lastValue-newValue*multiplier < sensor.ValorMinimo {
+			lastValue = sensor.ValorMinimo
 		} else {
 			lastValue -= newValue * multiplier
 		}
 	} else {
-		if lastValue+newValue*multiplier > sensor.valorMaximo {
-			lastValue = sensor.valorMaximo
+		if lastValue+newValue*multiplier > sensor.ValorMaximo {
+			lastValue = sensor.ValorMaximo
 		} else {
 			lastValue += newValue * multiplier
 		}
