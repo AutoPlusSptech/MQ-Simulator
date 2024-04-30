@@ -16,7 +16,7 @@ class Motherboard:
             self.bateria = 100
             self.messageId = 0
             self.deviceId = 'mq-simulator-demo'
-            self.registry = iotDevice.IoTHubDeviceClient.create_from_connection_string('HostName=hub-testes.azure-devices.net;DeviceId=mq-simulator-demo;SharedAccessKey=cTqz1wr8bSvcE3MX+e4X0Om5vQ+rqkyGoAIoTJmPB4w=')
+            self.registry = iotDevice.IoTHubDeviceClient.create_from_connection_string('ConnectionString')
             self.registry.connect()
             
         def addSensor(self, sensor):
