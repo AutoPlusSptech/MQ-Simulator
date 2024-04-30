@@ -10,7 +10,7 @@ import math
 
 class Sensor:
     
-    def __init__(self, unidadeMedida, modelo, dataInstalacao, fkVeiculo, valorMinimo, valorMaximo, valor, grupo, lastCaptureAt = None, idSensor = None, messageId = 0, fator = 1, eixos = None):
+    def __init__(self, unidadeMedida, modelo, dataInstalacao, fkVeiculo, valorMinimo, valorMaximo, valor, grupo, lastCaptureAt = None, idSensor = None, messageId = 0, fator = 1, eixos = None, degradacao = 0):
         self.unidadeMedida = unidadeMedida
         self.modelo = modelo
         self.dataInstalacao = dataInstalacao
@@ -21,8 +21,9 @@ class Sensor:
         self.grupo = grupo
         self.fator = fator
         self.eixos = eixos
+        self.degredacao = degradacao
         
-        db = conexao.Conexao('user', 'password', 'host', 'database')
+        db = conexao.Conexao('user_atividePI', 'sptech', 'localhost', 'vehicle_monitoring')
         
         query = f"INSERT INTO tbsensor (unidadeMedida, modelo, dataInstalacao, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}', '{self.dataInstalacao}', {self.fkVeiculo});"
         
@@ -47,8 +48,15 @@ class Sensor:
             # To do: Implementar logica de fator (multiplicando ou aplicando % ao valor simulado)                  
             if upOrDown == 1:
                 novoValor = self.valor + valorGerado
-                if self.fator > 1:
-                    novoValor = int(novoValor + (self.valor * (self.fator * 0.10)))
+                if self.fator > 1 and self.degradacao > 0:
+                    
+                    if "MQ-135" in self.modelo:
+                        novoValor = int(self.valor + (novoValor * (self.fator * 0.01)))
+                        self.degradacao -= 1
+                        
+                    else:
+                        novoValor = int(self.valor + (novoValor * (self.fator * 0.10)))
+                        self.degradacao -= 1
             else:
                 novoValor = self.valor - valorGerado
                 if self.fator > 1:
@@ -59,9 +67,9 @@ class Sensor:
             valorGerado = random.random()
 
             if upOrDown == 1:
-                novoValor = self.valor + (valorGerado * (self.fator * 0.10))
+                novoValor = self.valor + valorGerado
             else:
-                novoValor = self.valor - (valorGerado * (self.fator * 0.10))
+                novoValor = self.valor - (valorGerado * self.fator)
 
             novoValor = round(novoValor, 1)
             
@@ -122,7 +130,7 @@ class Sensor:
         
         self.lastCaptureAt = datetime.now()
         
-        db = conexao.Conexao('user', 'password', 'host', 'database')
+        db = conexao.Conexao('user_atividePI', 'sptech', 'localhost', 'vehicle_monitoring')
         
         query = f"INSERT INTO tbdadossensor (registro, dtColeta, fkSensor) VALUES ('{self.valor}', '{self.lastCaptureAt}', '{self.idSensor}');"
         
@@ -148,6 +156,8 @@ class Sensor:
         
     def elevarFator(self):
         self.fator += 1
+        self.degradacao = 5
         
     def resetFator(self):
         self.fator = 1
+        self.degradacao = 0
