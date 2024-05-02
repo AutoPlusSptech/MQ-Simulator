@@ -21,7 +21,7 @@ class Sensor:
         self.grupo = grupo
         self.fator = fator
         self.eixos = eixos
-        self.degredacao = degradacao
+        self.degradacao = degradacao
         
         db = conexao.Conexao('user_atividePI', 'sptech', 'localhost', 'vehicle_monitoring')
         
@@ -52,6 +52,7 @@ class Sensor:
                     
                     if "MQ-135" in self.modelo:
                         novoValor = int(self.valor + (novoValor * (self.fator * 0.01)))
+                        print(f'Degradacao MQ: {self.degradacao}')
                         self.degradacao -= 1
                         
                     else:
@@ -66,11 +67,31 @@ class Sensor:
         if "DHT-11" in self.modelo:
             valorGerado = random.random()
 
-            if upOrDown == 1:
+            if upOrDown == 1 and self.degradacao > 0:
+                novoValor = self.valor - (valorGerado * self.fator)
+                print(f'Degradacao DHT: {self.degradacao}')
+                self.degradacao -= 1
+            elif upOrDown == 2:
+                novoValor = self.valor + valorGerado
+                
+            else:
+                novoValor = self.valor - valorGerado
+
+            novoValor = round(novoValor, 1)
+            
+        if "F01" in self.modelo:
+            # Valor entre 70 e 100
+            valorGerado = random.randint(1, 3)
+            
+            if upOrDown == 1 and self.degradacao > 0:
+                novoValor = self.valor + (valorGerado * (self.fator * 0.60))
+                print(f'Degradacao F01: {self.degradacao}')
+                self.degradacao -= 1
+            elif upOrDown == 1:
                 novoValor = self.valor + valorGerado
             else:
-                novoValor = self.valor - (valorGerado * self.fator)
-
+                novoValor = self.valor - valorGerado
+                
             novoValor = round(novoValor, 1)
             
         if "MPU" in self.modelo and self.unidadeMedida == 'm/s²':
@@ -106,12 +127,12 @@ class Sensor:
         
         if "VL53L0X" in self.modelo:
             if self.valor == 0:
-                altura_cavidade = random.uniform(0.3, 0.5)
+                altura_cavidade = random.uniform(0.6, 0.8)
                 
             if frenagem:
-                altura_cavidade = random.uniform(0, 0.2)
+                altura_cavidade = random.uniform(0, 0.05)
             else:
-                altura_cavidade = random.uniform(0.0, 0.001)
+                altura_cavidade = random.uniform(0.0, 0.0001)
                 
             self.valor = self.valor - altura_cavidade
 
