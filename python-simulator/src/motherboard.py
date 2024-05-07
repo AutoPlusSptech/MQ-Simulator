@@ -128,7 +128,7 @@ class Motherboard:
             while True:
                 self.simulate()
                 
-                time.sleep(60)
+                time.sleep(300)
                 
         def economicRun(self):
             
