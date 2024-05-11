@@ -138,7 +138,7 @@ class Motherboard:
             
             while True:
                 
-                with open(f'/app/data/dados_simulador-{data_arquivo}.json', 'w') as file:
+                with open(f'../data/dados_simulador-{data_arquivo}.json', 'w') as file:
                     file.write('[]')
                 
                 problemaMotor = random.randint(1, 500)
@@ -173,7 +173,7 @@ class Motherboard:
                     # x.sendValueDb()
                     listData.append(x.valor)
                     
-                    with open(f'/app/data/dados_simulador-{data_arquivo}.json', 'r') as file:
+                    with open(f'../data/dados_simulador-{data_arquivo}.json', 'r') as file:
                         dados = json.load(file)
                         
                         dados.append({
@@ -183,7 +183,7 @@ class Motherboard:
                             'lastCaptureAt': str(datetime.now())
                         })
                         
-                    with open(f'/app/data/dados_simulador-{data_arquivo}.json', 'w') as file:
+                    with open(f'../data/dados_simulador-{data_arquivo}.json', 'w') as file:
                         json.dump(dados, file)
                     
                     # with open(f'python-simulator/data/dados_simulador-{data_arquivo}.csv', 'a') as file:
@@ -216,9 +216,9 @@ class Motherboard:
                 s3path = 'raw/testes_local'
                 
                 s3 = boto3.client('s3')
-                s3.upload_file(f'/app/data/dados_simulador-{data_arquivo}.json', bucket_name, f'{s3path}/dados-{datetime.now()}.json')
+                s3.upload_file(f'../data/dados_simulador-{data_arquivo}.json', bucket_name, f'{s3path}/dados-{datetime.now()}.json')
                 
-                os.remove(f'/app/data/dados_simulador-{data_arquivo}.json')
+                os.remove(f'../data/dados_simulador-{data_arquivo}.json')
                 
                     
                 msgCompressed = self.compress(jsonMessage)
