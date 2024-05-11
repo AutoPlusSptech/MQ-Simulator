@@ -23,17 +23,18 @@ class Sensor:
         self.eixos = eixos
         self.degradacao = degradacao
         
-        db = conexao.Conexao('user_atividePI', 'sptech', 'localhost', 'vehicle_monitoring')
+        # db = conexao.Conexao('user_atividePI', 'sptech', 'localhost', 'vehicle_monitoring')
         # db = conexao.Conexao('user_auto_plus', 'password', 'host', 'vehicle_monitoring')
         
-        query = f"INSERT INTO tbsensor (unidadeMedida, modelo, dataInstalacao, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}', '{self.dataInstalacao}', {self.fkVeiculo});"
+        # query = f"INSERT INTO tbsensor (unidadeMedida, modelo, dataInstalacao, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}', '{self.dataInstalacao}', {self.fkVeiculo});"
         # query = f"INSERT INTO tbsensor (unidadeMedida, modelo, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}',  {self.fkVeiculo});"
         
         # print(f'Query: {query}')
         
-        db.insert(query)
-        self.idSensor = db.getLastId()
-        db.close()
+        # db.insert(query)
+        # self.idSensor = db.getLastId()
+        self.idSensor = random.randint(1, 100000)
+        # db.close()
         
     def generateValue(self, upOrDown, frenagem = False):
         
