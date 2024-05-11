@@ -1,4 +1,4 @@
-import sensor
+import common.sensor as sensor
 import json
 import sys
 import azure.iot.hub as iotHub
@@ -124,16 +124,18 @@ class Motherboard:
                     print(f'Mensagem ainda maior que 200 bytes!\nTamanho da mensagem: {sys.getsizeof(jsonMessage)}')
                     print('Mensagem não enviada!')
                 
-        def run(self):
+        def cloud_run(self):
             while True:
                 self.simulate()
                 
                 time.sleep(300)
                 
-        def economicRun(self):
+        def local_run(self):
             
-            with open('dados.csv', 'w') as file:
-                file.write('idSensor;modelo;valor;dtColeta\n')
+            data_arquivo = datetime.now().strftime('%d-%m-%Y-%H-%M-%S')
+            
+            with open(f'python-simulator/data/dados_simulador-{data_arquivo}.json', 'w') as file:
+                file.write('[]')
             
             
             while True:
@@ -170,9 +172,22 @@ class Motherboard:
                     # x.sendValueDb()
                     listData.append(x.valor)
                     
-                    with open('dados.csv', 'a') as file:
-                        # file.write(f'{x.idSensor},{x.valor},{x.lastCaptureAt}\n')
-                        file.write(f'{x.idSensor};{x.modelo};{x.valor};{datetime.now()}\n')
+                    with open(f'python-simulator/data/dados_simulador-{data_arquivo}.json', 'r') as file:
+                        dados = json.load(file)
+                        
+                        dados.append({
+                            'idSensor': x.idSensor,
+                            'modelo': x.modelo,
+                            'valor': x.valor,
+                            'lastCaptureAt': str(datetime.now())
+                        })
+                        
+                    with open(f'python-simulator/data/dados_simulador-{data_arquivo}.json', 'w') as file:
+                        json.dump(dados, file)
+                    
+                    # with open(f'python-simulator/data/dados_simulador-{data_arquivo}.csv', 'a') as file:
+                    #     # file.write(f'{x.idSensor},{x.valor},{x.lastCaptureAt}\n')
+                    #     file.write(f'{x.idSensor};{x.modelo};{x.valor};{datetime.now()}\n')
                         
                         
                 self.messageId += 1

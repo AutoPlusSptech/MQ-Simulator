@@ -1,6 +1,6 @@
-import conexao
-import sensor
-import motherboard
+import common.conexao as conexao
+import common.sensor as sensor
+import common.motherboard as motherboard
 import time
 from datetime import datetime
 import psutil
@@ -26,6 +26,6 @@ def main():
     placa.addSensor(vl53l0x)
     placa.addSensor(f01r064905)
     
-    placa.economicRun()
+    placa.local_run()
     
 main()

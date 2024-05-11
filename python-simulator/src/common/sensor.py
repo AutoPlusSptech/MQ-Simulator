@@ -1,6 +1,6 @@
 import random
 import time
-import conexao
+import common.conexao as conexao
 from datetime import datetime
 import json
 import sys
@@ -23,11 +23,11 @@ class Sensor:
         self.eixos = eixos
         self.degradacao = degradacao
         
-        #db = conexao.Conexao('user_atividePI', 'sptech', 'localhost', 'vehicle_monitoring')
-        db = conexao.Conexao('user_auto_plus', 'password', 'host', 'vehicle_monitoring')
+        db = conexao.Conexao('user_atividePI', 'sptech', 'localhost', 'vehicle_monitoring')
+        # db = conexao.Conexao('user_auto_plus', 'password', 'host', 'vehicle_monitoring')
         
-        # query = f"INSERT INTO tbsensor (unidadeMedida, modelo, dataInstalacao, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}', '{self.dataInstalacao}', {self.fkVeiculo});"
-        query = f"INSERT INTO tbsensor (unidadeMedida, modelo, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}',  {self.fkVeiculo});"
+        query = f"INSERT INTO tbsensor (unidadeMedida, modelo, dataInstalacao, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}', '{self.dataInstalacao}', {self.fkVeiculo});"
+        # query = f"INSERT INTO tbsensor (unidadeMedida, modelo, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}',  {self.fkVeiculo});"
         
         # print(f'Query: {query}')
         
@@ -153,11 +153,11 @@ class Sensor:
         
         self.lastCaptureAt = datetime.now()
         
-        #db = conexao.Conexao('user_atividePI', 'sptech', 'localhost', 'vehicle_monitoring')
-        db = conexao.Conexao('user_auto_plus', 'password', 'host', 'vehicle_monitoring')
+        db = conexao.Conexao('user_atividePI', 'sptech', 'localhost', 'vehicle_monitoring')
+        # db = conexao.Conexao('user_auto_plus', 'password', 'host', 'vehicle_monitoring')
         
-        # query = f"INSERT INTO tbdadossensor (registro, dtColeta, fkSensor) VALUES ('{self.valor}', '{self.lastCaptureAt}', '{self.idSensor}');"
-        query = f"INSERT INTO tbdadossensor (registro, fkSensor) VALUES ('{self.valor}', '{self.idSensor}');"
+        query = f"INSERT INTO tbdadossensor (registro, dtColeta, fkSensor) VALUES ('{self.valor}', '{self.lastCaptureAt}', '{self.idSensor}');"
+        # query = f"INSERT INTO tbdadossensor (registro, fkSensor) VALUES ('{self.valor}', '{self.idSensor}');"
         
         db.insert(query)
         db.close()
