@@ -219,7 +219,7 @@ class Motherboard:
                 
                 s3path = 'data/ec2'
                 
-                formatacao_data = re.sub(r'\s', '-', str(last_capture))
+                formatacao_data = re.sub(r'[\s:]', '-', last_capture)
                 
                 s3 = boto3.client('s3')
                 s3.upload_file(f'../data/dados_simulador-{data_arquivo}.json', bucket_name, f'{s3path}/dados-{formatacao_data}.json')
