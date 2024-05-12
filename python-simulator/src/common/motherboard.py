@@ -139,7 +139,7 @@ class Motherboard:
             while True:
                 
                 with open(f'../data/dados_simulador-{data_arquivo}.json', 'w') as file:
-                    file.write('[{"origin": "simulator"}, {"version": "local_run"}, {"destiny":"s3"}]')
+                    file.write('[{"origin": "simulator", "version": "local_run", "destiny":"s3", "body": []}]')
                 
                 problemaMotor = random.randint(1, 500)
                 
@@ -177,15 +177,13 @@ class Motherboard:
                         dados = json.load(file)
                         
                         campo_dado = {
-                            "body": {
-                                'idSensor': x.idSensor,
-                                'modelo': x.modelo,
-                                'valor': x.valor,
-                                'lastCaptureAt': str(datetime.now())
-                            }
+                            'idSensor': x.idSensor,
+                            'modelo': x.modelo,
+                            'valor': x.valor,
+                            'lastCaptureAt': str(datetime.now())
                         }
                         
-                        dados.append(campo_dado)
+                        dados[0]['body'].append(campo_dado)
                         
                     with open(f'../data/dados_simulador-{data_arquivo}.json', 'w') as file:
                         json.dump(dados, file)
