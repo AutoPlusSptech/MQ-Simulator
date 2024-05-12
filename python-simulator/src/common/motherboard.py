@@ -8,7 +8,7 @@ import random
 import time
 import zlib
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 import boto3
 import os
 
@@ -135,6 +135,8 @@ class Motherboard:
             
             data_arquivo = datetime.now().strftime('%d-%m-%Y-%H-%M-%S')
             
+            last_capture = datetime.now()
+            
             
             while True:
                 
@@ -180,7 +182,7 @@ class Motherboard:
                             'idSensor': x.idSensor,
                             'modelo': x.modelo,
                             'valor': x.valor,
-                            'lastCaptureAt': str(datetime.now())
+                            'lastCaptureAt': str(last_capture)
                         }
                         
                         dados[0]['body'].append(campo_dado)
@@ -232,6 +234,8 @@ class Motherboard:
                     
                     # print(f'Mensagem Descomprimida: {msgDecompressed}')
                     # print(f'Bytes Mensagem Descomprimida: {sys.getsizeof(msgDecompressed)}\n')
+                    
+                last_capture = last_capture + timedelta(minutes=5)
                     
                     
                 time.sleep(0.1)
