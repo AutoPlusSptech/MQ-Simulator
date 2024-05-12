@@ -217,7 +217,7 @@ class Motherboard:
                     
                 bucket_name = '3cco-autoplus-mq-bucket-raw'
                 
-                s3path = 'raw/testes_local'
+                s3path = 'data/ec2'
                 
                 s3 = boto3.client('s3')
                 s3.upload_file(f'../data/dados_simulador-{data_arquivo}.json', bucket_name, f'{s3path}/dados-{datetime.now()}.json')
