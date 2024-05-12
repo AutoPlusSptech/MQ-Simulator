@@ -139,7 +139,7 @@ class Motherboard:
             while True:
                 
                 with open(f'../data/dados_simulador-{data_arquivo}.json', 'w') as file:
-                    file.write('[]')
+                    file.write('[{origin: "simulator"}, {version: "local_run"}, {destiny:"s3"}]')
                 
                 problemaMotor = random.randint(1, 500)
                 
