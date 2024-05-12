@@ -143,7 +143,7 @@ class Motherboard:
                 with open(f'../data/dados_simulador-{data_arquivo}.json', 'w') as file:
                     file.write('[{"origin": "simulator", "version": "local_run", "destiny":"s3", "body": []}]')
                 
-                problemaMotor = random.randint(1, 5000)
+                problemaMotor = random.randint(1, 1000)
                 
                 if problemaMotor == 67:
                     for x in self.sensores:
@@ -219,8 +219,10 @@ class Motherboard:
                 
                 s3path = 'data/ec2'
                 
+                formatacao_data = re.sub(r'\s', '-', str(last_capture))
+                
                 s3 = boto3.client('s3')
-                s3.upload_file(f'../data/dados_simulador-{data_arquivo}.json', bucket_name, f'{s3path}/dados-{datetime.now()}.json')
+                s3.upload_file(f'../data/dados_simulador-{data_arquivo}.json', bucket_name, f'{s3path}/dados-{formatacao_data}.json')
                 
                 os.remove(f'../data/dados_simulador-{data_arquivo}.json')
                 
