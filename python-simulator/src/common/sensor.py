@@ -205,7 +205,13 @@ class Sensor:
             else:
                 altura_cavidade = random.uniform(0.0, 0.0001)
                 
-            self.valor = self.valor - altura_cavidade
+                
+            novoValor = self.valor - altura_cavidade
+            
+            if novoValor < 0:
+                novoValor = 0
+                
+            self.valor = novoValor
 
             
             
