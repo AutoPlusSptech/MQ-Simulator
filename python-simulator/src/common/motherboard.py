@@ -8,8 +8,9 @@ import random
 import time
 import zlib
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 import boto3
+import os
 
 class Motherboard:
         
@@ -134,13 +135,15 @@ class Motherboard:
             
             data_arquivo = datetime.now().strftime('%d-%m-%Y-%H-%M-%S')
             
-            with open(f'python-simulator/data/dados_simulador-{data_arquivo}.json', 'w') as file:
-                file.write('[]')
+            last_capture = datetime.now()
             
             
             while True:
                 
-                problemaMotor = random.randint(1, 100)
+                with open(f'../data/dados_simulador-{data_arquivo}.json', 'w') as file:
+                    file.write('[{"origin": "simulator", "version": "local_run", "destiny":"s3", "body": []}]')
+                
+                problemaMotor = random.randint(1, 300)
                 
                 if problemaMotor == 67:
                     for x in self.sensores:
@@ -172,17 +175,19 @@ class Motherboard:
                     # x.sendValueDb()
                     listData.append(x.valor)
                     
-                    with open(f'python-simulator/data/dados_simulador-{data_arquivo}.json', 'r') as file:
+                    with open(f'../data/dados_simulador-{data_arquivo}.json', 'r') as file:
                         dados = json.load(file)
                         
-                        dados.append({
+                        campo_dado = {
                             'idSensor': x.idSensor,
                             'modelo': x.modelo,
                             'valor': x.valor,
-                            'lastCaptureAt': str(datetime.now())
-                        })
+                            'lastCaptureAt': str(last_capture)
+                        }
                         
-                    with open(f'python-simulator/data/dados_simulador-{data_arquivo}.json', 'w') as file:
+                        dados[0]['body'].append(campo_dado)
+                        
+                    with open(f'../data/dados_simulador-{data_arquivo}.json', 'w') as file:
                         json.dump(dados, file)
                     
                     # with open(f'python-simulator/data/dados_simulador-{data_arquivo}.csv', 'a') as file:
@@ -210,12 +215,16 @@ class Motherboard:
                 # with open (f'dados-{datetime.now().date()}.json', 'w') as file:
                 #     file.write(jsonMessage)
                     
-                # bucket_name = '3cco-autoplus-mq-bucket-raw'
+                bucket_name = '3cco-autoplus-mq-bucket-raw'
                 
-                # s3path = 'raw/testes_local'
+                s3path = 'data/ec2'
                 
-                # s3 = boto3.client('s3')
-                # s3.upload_file(f'dados-{datetime.now().date()}.json', bucket_name, f'{s3path}/dados-{datetime.now().date()}.json')
+                formatacao_data = re.sub(r'[\s:]', '-', str(last_capture))
+                
+                s3 = boto3.client('s3')
+                s3.upload_file(f'../data/dados_simulador-{data_arquivo}.json', bucket_name, f'{s3path}/dados-{formatacao_data}.json')
+                
+                os.remove(f'../data/dados_simulador-{data_arquivo}.json')
                 
                     
                 msgCompressed = self.compress(jsonMessage)
@@ -227,6 +236,8 @@ class Motherboard:
                     
                     # print(f'Mensagem Descomprimida: {msgDecompressed}')
                     # print(f'Bytes Mensagem Descomprimida: {sys.getsizeof(msgDecompressed)}\n')
+                    
+                last_capture = last_capture + timedelta(minutes=5)
                     
                     
                 time.sleep(0.1)
