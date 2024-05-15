@@ -143,9 +143,9 @@ class Motherboard:
                 with open(f'../data/dados_simulador-{data_arquivo}.json', 'w') as file:
                     file.write('[{"origin": "simulator", "version": "local_run", "destiny":"s3", "body": []}]')
                 
-                problemaMotor = random.randint(1, 300)
+                problemaMotor = random.randint(1, 50)
                 
-                if problemaMotor == 67:
+                if problemaMotor == 33:
                     for x in self.sensores:
                         if x.grupo == 'Motor':
                             x.elevarFator()
