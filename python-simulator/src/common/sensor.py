@@ -33,6 +33,8 @@ class Sensor:
         
         db.insert(query)
         self.idSensor = db.getLastId()
+        print(f'ID Sensor: {self.idSensor}')
+        print(f'Type ID Sensor: {type(self.idSensor)}')
         db.close()
         
     def generateValue(self, upOrDown, frenagem = False):
