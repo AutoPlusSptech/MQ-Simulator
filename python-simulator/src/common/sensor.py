@@ -32,7 +32,7 @@ class Sensor:
         print(f'Query: {query}')
         
         db.insert(query)
-        self.idSensor = db.getLastId()
+        self.idSensor = int(db.getLastId())
         print(f'ID Sensor: {self.idSensor}')
         print(f'Type ID Sensor: {type(self.idSensor)}')
         db.close()
