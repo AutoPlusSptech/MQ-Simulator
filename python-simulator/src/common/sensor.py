@@ -24,7 +24,7 @@ class Sensor:
         self.degradacao = degradacao
         
         # db = conexao.Conexao('user_atividePI', 'sptech', 'localhost', 'vehicle_monitoring')
-        db = conexao.Conexao('user_auto_plus', 'password', 'host', 'vehicle_monitoring')
+        db = conexao.Conexao('user_auto_plus', '1rI|426yG', 'auto-plus-server.database.windows.net:1433', 'vehicle_monitoring')
         
         # query = f"INSERT INTO tbsensor (unidadeMedida, modelo, dataInstalacao, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}', '{self.dataInstalacao}', {self.fkVeiculo});"
         query = f"INSERT INTO tbsensor (unidadeMedida, modelo, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}',  {self.fkVeiculo});"
