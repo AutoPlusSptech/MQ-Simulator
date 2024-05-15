@@ -24,17 +24,17 @@ class Sensor:
         self.degradacao = degradacao
         
         # db = conexao.Conexao('user_atividePI', 'sptech', 'localhost', 'vehicle_monitoring')
-        # db = conexao.Conexao('user_auto_plus', 'password', 'host', 'vehicle_monitoring')
+        db = conexao.Conexao('user_auto_plus', 'password', 'host', 'vehicle_monitoring')
         
         # query = f"INSERT INTO tbsensor (unidadeMedida, modelo, dataInstalacao, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}', '{self.dataInstalacao}', {self.fkVeiculo});"
-        # query = f"INSERT INTO tbsensor (unidadeMedida, modelo, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}',  {self.fkVeiculo});"
+        query = f"INSERT INTO tbsensor (unidadeMedida, modelo, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}',  {self.fkVeiculo});"
         
-        # print(f'Query: {query}')
+        print(f'Query: {query}')
         
-        # db.insert(query)
-        # self.idSensor = db.getLastId()
+        db.insert(query)
+        self.idSensor = db.getLastId()
         self.idSensor = random.randint(1, 100000)
-        # db.close()
+        db.close()
         
     def generateValue(self, upOrDown, frenagem = False):
         
@@ -59,8 +59,11 @@ class Sensor:
                         self.degradacao -= 1
                         
                     else:
-                        novoValor = int(self.valor + (novoValor * (self.fator * 0.10)))
+                        novoValor = int(self.valor + (novoValor * (self.fator * 0.5)))
                         self.degradacao -= 1
+                        
+                    if self.degradacao == 0:
+                        self.resetFator()
             else:
                 novoValor = self.valor - valorGerado
                 if self.fator > 1:
@@ -74,6 +77,10 @@ class Sensor:
                 novoValor = self.valor - (valorGerado * self.fator)
                 print(f'Degradacao DHT: {self.degradacao}')
                 self.degradacao -= 1
+                
+                if self.degradacao == 0:
+                    self.resetFator()
+                
             elif upOrDown == 2:
                 novoValor = self.valor + valorGerado
                 
@@ -84,12 +91,16 @@ class Sensor:
             
         if "F01" in self.modelo:
             # Valor entre 70 e 100
-            valorGerado = random.randint(1, 3)
+            valorGerado = random.randint(1, 2)
             
             if upOrDown == 1 and self.degradacao > 0:
-                novoValor = self.valor + (valorGerado * (self.fator * 0.60))
+                novoValor = self.valor + (valorGerado * (self.fator * 0.70))
                 print(f'Degradacao F01: {self.degradacao}')
                 self.degradacao -= 1
+                
+                if self.degradacao == 0:
+                    self.resetFator()
+                
             elif upOrDown == 1:
                 novoValor = self.valor + valorGerado
             else:

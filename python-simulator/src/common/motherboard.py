@@ -151,13 +151,6 @@ class Motherboard:
                             x.elevarFator()
                             
                             print(f'Fator elevado para o sensor {x.modelo}')
-                    
-                # if problemaPneu == 67:
-                #     for x in self.sensores:
-                #         if x.grupo == 'Pneu':
-                #             x.elevarFator()
-                            
-                #             print(f'Fator elevado para o sensor {x.modelo}')
                             
                 upOrDown = random.randint(1, 2)
                 
