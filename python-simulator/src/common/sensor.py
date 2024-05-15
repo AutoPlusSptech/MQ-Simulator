@@ -33,7 +33,6 @@ class Sensor:
         
         db.insert(query)
         self.idSensor = db.getLastId()
-        self.idSensor = random.randint(1, 100000)
         db.close()
         
     def generateValue(self, upOrDown, frenagem = False):
