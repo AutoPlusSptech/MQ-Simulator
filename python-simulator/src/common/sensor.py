@@ -48,8 +48,7 @@ class Sensor:
             else:
                 valorGerado = random.randint(1, 3)
              
-              
-            # To do: Implementar logica de fator (multiplicando ou aplicando % ao valor simulado)                  
+                         
             if upOrDown == 1:
                 novoValor = self.valor + valorGerado
                 if self.fator > 1 and self.degradacao > 0:
@@ -74,7 +73,7 @@ class Sensor:
         if "DHT-11" in self.modelo:
             valorGerado = random.random()
 
-            if upOrDown == 1 and self.degradacao > 0:
+            if self.degradacao > 0:
                 novoValor = self.valor - (valorGerado * self.fator)
                 print(f'Degradacao DHT: {self.degradacao}')
                 self.degradacao -= 1
@@ -89,9 +88,9 @@ class Sensor:
             
         if "F01" in self.modelo:
             # Valor entre 70 e 100
-            valorGerado = random.randint(1, 2)
+            valorGerado = random.randint(1, 3)
             
-            if upOrDown == 1 and self.degradacao > 0:
+            if self.degradacao > 0:
                 novoValor = self.valor + (valorGerado * (self.fator * 0.90))
                 print(f'Degradacao F01: {self.degradacao}')
                 self.degradacao -= 1
@@ -171,7 +170,7 @@ class Sensor:
 
         if "MPU" in self.modelo and self.unidadeMedida == 'ºC':
             self.last_temp = None
-            self.temp_range = (-20, 85)
+            self.temp_range = (15, 85)
             self.max_change_temp = 3
 
             if self.last_temp is not None:
