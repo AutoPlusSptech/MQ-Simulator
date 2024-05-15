@@ -45,7 +45,7 @@ class Motherboard:
             
             problemaMotor = random.randint(1, 50)
                 
-            if problemaMotor == 67:
+            if problemaMotor == 33:
                 for x in self.sensores:
                     if x.grupo == 'Motor':
                         x.elevarFator()

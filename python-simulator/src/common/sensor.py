@@ -48,31 +48,30 @@ class Sensor:
             else:
                 valorGerado = random.randint(1, 3)
              
-                         
-            if upOrDown == 1:
+            if self.fator > 1 and self.degradacao > 0:
+                    
+                print(f'Fator MQ: {self.fator}')
+                    
+                if "MQ-135" in self.modelo:
+                    novoValor = int(self.valor + (novoValor * (self.fator * 0.01)))
+                    print(f'Degradacao MQ: {self.degradacao}')
+                    self.degradacao -= 1
+                        
+                else:
+                    novoValor = int(self.valor + (novoValor * (self.fator * 0.5)))
+                    self.degradacao -= 1
+                        
+                if self.degradacao == 0:
+                    self.resetFator()
+            elif upOrDown == 1:
                 novoValor = self.valor + valorGerado
-                if self.fator > 1 and self.degradacao > 0:
-                    
-                    print(f'Fator: {self.fator}')
-                    
-                    if "MQ-135" in self.modelo:
-                        novoValor = int(self.valor + (novoValor * (self.fator * 0.01)))
-                        print(f'Degradacao MQ: {self.degradacao}')
-                        self.degradacao -= 1
-                        
-                    else:
-                        novoValor = int(self.valor + (novoValor * (self.fator * 0.5)))
-                        self.degradacao -= 1
-                        
-                    if self.degradacao == 0:
-                        self.resetFator()
             else:
                 novoValor = self.valor - valorGerado
                     
         if "DHT-11" in self.modelo:
             valorGerado = random.random()
 
-            if self.degradacao > 0:
+            if self.fator > 1 and self.degradacao > 0:
                 novoValor = self.valor - (valorGerado * self.fator)
                 print(f'Degradacao DHT: {self.degradacao}')
                 self.degradacao -= 1
@@ -89,7 +88,7 @@ class Sensor:
             # Valor entre 70 e 100
             valorGerado = random.randint(1, 3)
             
-            if self.degradacao > 0:
+            if self.fator and self.degradacao > 0:
                 novoValor = self.valor + (valorGerado * (self.fator * 0.90))
                 print(f'Degradacao F01: {self.degradacao}')
                 self.degradacao -= 1
