@@ -24,18 +24,19 @@ class Sensor:
         self.degradacao = degradacao
         
         # db = conexao.Conexao('user_atividePI', 'sptech', 'localhost', 'vehicle_monitoring')
-        db = conexao.Conexao('user_auto_plus', '1rI|426yG', 'auto-plus-server.database.windows.net:1433', 'vehicle_monitoring')
+        #db = conexao.Conexao('user_auto_plus', '1rI|426yG', 'auto-plus-server.database.windows.net:1433', 'vehicle_monitoring')
         
         # query = f"INSERT INTO tbsensor (unidadeMedida, modelo, dataInstalacao, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}', '{self.dataInstalacao}', {self.fkVeiculo});"
-        query = f"INSERT INTO tbsensor (unidadeMedida, modelo, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}',  {self.fkVeiculo});"
+        #query = f"INSERT INTO tbsensor (unidadeMedida, modelo, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}',  {self.fkVeiculo});"
         
-        print(f'Query: {query}')
+        #print(f'Query: {query}')
         
-        db.insert(query)
-        self.idSensor = int(db.getLastId())
-        print(f'ID Sensor: {self.idSensor}')
-        print(f'Type ID Sensor: {type(self.idSensor)}')
-        db.close()
+        #db.insert(query)
+        #self.idSensor = int(db.getLastId())
+        #print(f'ID Sensor: {self.idSensor}')
+        #print(f'Type ID Sensor: {type(self.idSensor)}')
+        #db.close()
+        self.idSensor = random.randint(1, 1000)
         
     def generateValue(self, upOrDown, frenagem = False):
         
@@ -212,9 +213,9 @@ class Sensor:
                 altura_cavidade = random.uniform(0.6, 0.8)
                 
             if frenagem:
-                altura_cavidade = random.uniform(0, 0.05)
+                altura_cavidade = random.uniform(0, 0.1)
             else:
-                altura_cavidade = random.uniform(0.0, 0.0001)
+                altura_cavidade = random.uniform(0.0, 0.01)
                 
                 
             novoValor = self.valor - altura_cavidade
