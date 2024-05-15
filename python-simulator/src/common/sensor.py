@@ -49,6 +49,8 @@ class Sensor:
                 valorGerado = random.randint(1, 3)
              
             if self.fator > 1 and self.degradacao > 0:
+                
+                novoValor = self.valor + valorGerado
                     
                 print(f'Fator MQ: {self.fator}')
                     
