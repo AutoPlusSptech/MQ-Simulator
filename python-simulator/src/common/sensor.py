@@ -74,7 +74,7 @@ class Sensor:
             valorGerado = random.random()
 
             if self.fator > 1 and self.degradacao > 0:
-                novoValor = self.valor - (valorGerado * self.fator)
+                novoValor = self.valor - (valorGerado * (self.fator * 4))
                 print(f'Degradacao DHT: {self.degradacao}')
                 self.degradacao -= 1
                 
@@ -132,8 +132,14 @@ class Sensor:
                 else:
                     novoValor = self.valor - self.max_change_acce
 
-            self.valor = novoValor
-            self.last_temp = self.valor
+            if self.valor is not None and novoValor > self.valor:
+                self.valor = novoValor
+                self.last_temp = self.valor
+                return False
+            else:
+                self.valor = novoValor
+                self.last_temp = self.valor
+                return True
             
         if "MPU" in self.modelo and self.unidadeMedida == 'rad/s':
             self.last_speed = None
@@ -260,7 +266,7 @@ class Sensor:
         # print(f'Size JSON: {sys.getsizeof(jsonMessage)}\n')
         
     def elevarFator(self):
-        self.fator += 1
+        self.fator = 2
         self.degradacao = 5
         
     def resetFator(self):
