@@ -43,7 +43,7 @@ class Motherboard:
             
             frenagem = False
             
-            problemaMotor = random.randint(1, 2)
+            problemaMotor = random.randint(1, 50)
                 
             if problemaMotor == 67:
                 for x in self.sensores:
