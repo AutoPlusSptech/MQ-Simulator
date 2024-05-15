@@ -79,9 +79,6 @@ class Sensor:
                 print(f'Degradacao DHT: {self.degradacao}')
                 self.degradacao -= 1
                 
-                if self.degradacao == 0:
-                    self.resetFator()
-                
             elif upOrDown == 2:
                 novoValor = self.valor + valorGerado
                 
@@ -95,12 +92,9 @@ class Sensor:
             valorGerado = random.randint(1, 2)
             
             if upOrDown == 1 and self.degradacao > 0:
-                novoValor = self.valor + (valorGerado * (self.fator * 0.70))
+                novoValor = self.valor + (valorGerado * (self.fator * 0.90))
                 print(f'Degradacao F01: {self.degradacao}')
                 self.degradacao -= 1
-                
-                if self.degradacao == 0:
-                    self.resetFator()
                 
             elif upOrDown == 1:
                 novoValor = self.valor + valorGerado
