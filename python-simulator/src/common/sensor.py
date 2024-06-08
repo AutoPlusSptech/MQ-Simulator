@@ -10,7 +10,7 @@ import math
 
 class Sensor:
     
-    def __init__(self, unidadeMedida, modelo, dataInstalacao, fkVeiculo, valorMinimo, valorMaximo, valor, grupo, lastCaptureAt = None, idSensor = None, messageId = 0, fator = 1, eixos = None, degradacao = 0):
+    def __init__(self, unidadeMedida, modelo, dataInstalacao, fkVeiculo, valorMinimo, valorMaximo, valor, grupo, idSensor = 0, lastCaptureAt = None, messageId = 0, fator = 1, eixos = None, degradacao = 0):
         self.unidadeMedida = unidadeMedida
         self.modelo = modelo
         self.dataInstalacao = dataInstalacao
@@ -22,19 +22,29 @@ class Sensor:
         self.fator = fator
         self.eixos = eixos
         self.degradacao = degradacao
-        
+        self.idSensor = idSensor
+
+        if self.idSensor == 0:
+            self.idSensor = self.register_sensor()
+
+    def register_sensor(self):
         # db = conexao.Conexao('user_atividePI', 'sptech', 'localhost', 'vehicle_monitoring')
-        # db = conexao.Conexao('user_auto_plus', 'password', 'host', 'vehicle_monitoring')
+        db = conexao.Conexao('user', 'password', 'server', 'database')
         
-        # query = f"INSERT INTO tbsensor (unidadeMedida, modelo, dataInstalacao, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}', '{self.dataInstalacao}', {self.fkVeiculo});"
-        # query = f"INSERT INTO tbsensor (unidadeMedida, modelo, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}',  {self.fkVeiculo});"
+        #query = f"INSERT INTO tbsensor (unidadeMedida, modelo, dataInstalacao, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}', '{self.dataInstalacao}', {self.fkVeiculo});"
+        query = f"INSERT INTO sensor (unidade_medida, modelo, fk_veiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}',  {self.fkVeiculo});"
         
-        # print(f'Query: {query}')
+        print(f'Query de insert do Sensor: {query}')
         
-        # db.insert(query)
-        # self.idSensor = db.getLastId()
-        self.idSensor = random.randint(1, 100000)
-        # db.close()
+        db.insert(query)
+        idSensor = db.getLastId()
+
+        print(f'ID do Sensor: {idSensor}')
+
+        # idSensor = random.randint(1, 100000)
+        db.close()
+
+        return idSensor
         
     def generateValue(self, upOrDown, frenagem = False):
         

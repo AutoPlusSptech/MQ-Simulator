@@ -1,5 +1,5 @@
 import common.sensor as sensor
-import json
+import simplejson as json
 import sys
 import azure.iot.hub as iotHub
 import azure.iot.device as iotDevice
@@ -60,7 +60,7 @@ class Motherboard:
                     sensor.generateValue(upOrDown, frenagem)
                 else:
                     frenagem = sensor.generateValue(upOrDown)                
-                sensor.sendValueDb()
+                #sensor.sendValueDb()
                 listData.append(sensor.valor)
                 listIdSensor.append(sensor.idSensor)
                 
@@ -129,7 +129,7 @@ class Motherboard:
             while True:
                 self.simulate()
                 
-                time.sleep(300)
+                time.sleep(60)
                 
         def local_run(self):
             
@@ -179,10 +179,10 @@ class Motherboard:
                         dados = json.load(file)
                         
                         campo_dado = {
-                            'idSensor': x.idSensor,
+                            'id_sensor': x.idSensor,
                             'modelo': x.modelo,
                             'valor': x.valor,
-                            'lastCaptureAt': str(last_capture)
+                            'dt_coleta': str(last_capture)
                         }
                         
                         dados[0]['body'].append(campo_dado)
