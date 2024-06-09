@@ -57,30 +57,22 @@ class CarSimulator:
         return self.valor
 
     def update_temperature(self):
-        # Modelando o aumento de temperatura com base na velocidade e na desaceleração
-        # Fatores de ajuste arbitrários para simplificação
         temp_change = (self.velocity + self.acceleration) * random.uniform(0.01, 0.1)
         
-        # Fator de resfriamento
-        cooling_factor = 0.1  # Ajuste conforme necessário
+        cooling_factor = 0.1
         
-        # Aumento líquido de temperatura
-        net_temp_change = temp_change - cooling_factor * (self.temperature - 20)  # Fator de resfriamento baseado na temperatura
+        net_temp_change = temp_change - cooling_factor * (self.temperature - 20)
         
-        # Atualizando a temperatura
         self.temperature += net_temp_change
         
-        # Limitando a temperatura dentro da faixa definida
         self.temperature = max(min(self.temperature, self.temp_range[1]), self.temp_range[0])
 
         self.temperatures.append(self.temperature)
 
     def update_car(self):
-        # Modelando a mudança na velocidade e aceleração do carro
         self.velocity += random.uniform(-1, 1)
         self.acceleration += random.uniform(-0.5, 0.5)
         
-        # Limitando a velocidade e aceleração dentro das faixas definidas
         self.velocity = max(min(self.velocity, self.velocity_range[1]), self.velocity_range[0])
         self.acceleration = max(min(self.acceleration, self.acceleration_range[1]), self.acceleration_range[0])
 
