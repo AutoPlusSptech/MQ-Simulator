@@ -29,7 +29,7 @@ class Sensor:
 
     def register_sensor(self):
         # db = conexao.Conexao('user_atividePI', 'sptech', 'localhost', 'vehicle_monitoring')
-        db = conexao.Conexao('user', 'password', 'server', 'database')
+        db = conexao.Conexao('user_auto_plus', '62Fwbs[7pT#sc$sw', 'auto-plus-db-server.database.windows.net:1433', 'vehicle_monitoring')
         
         #query = f"INSERT INTO tbsensor (unidadeMedida, modelo, dataInstalacao, fkVeiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}', '{self.dataInstalacao}', {self.fkVeiculo});"
         query = f"INSERT INTO sensor (unidade_medida, modelo, fk_veiculo) VALUES ('{self.unidadeMedida}', '{self.modelo}',  {self.fkVeiculo});"

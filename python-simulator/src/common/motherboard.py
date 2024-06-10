@@ -38,8 +38,7 @@ class Motherboard:
             return msgJson
             
         def simulate(self):
-            listData = []
-            listIdSensor = []
+            listJson = []
             
             frenagem = False
             
@@ -60,30 +59,27 @@ class Motherboard:
                     sensor.generateValue(upOrDown, frenagem)
                 else:
                     frenagem = sensor.generateValue(upOrDown)                
-                #sensor.sendValueDb()
-                listData.append(sensor.valor)
-                listIdSensor.append(sensor.idSensor)
                 
-            self.messageId += 1
-                
-            mensagem_data = {
-                'vehicleId': self.sensores[0].fkVeiculo,
-                'sensorId': listIdSensor,
-                'registry': listData,
-                'battery': round(self.bateria, 2)
-            }
-            
-            jsonMessage = json.dumps(mensagem_data)
-            
+                # Mensagem sendo enviada para o IoT Hub
+                mensagem_data = {
+                    'sensorId': int(sensor.idSensor),
+                    'registry': sensor.valor,
+                    'battery': round(self.bateria, 2),
+                    'dtColeta': str(datetime.now())
+                }
+
+                #jsonMessage = json.dumps(mensagem_data)
+                listJson.append(mensagem_data)
+
+            jsonMessage = json.dumps(listJson)
+
             mensagem = Message(jsonMessage, content_encoding='utf-8', content_type='application/json')
-            
+
             print(f'Mensagen: {mensagem}')
             print(f'Bytes Mensagem: {sys.getsizeof(jsonMessage)}')
-            
+
             if sys.getsizeof(jsonMessage) <= 200:
-                
                 chanceErro = random.randint(1, 100)
-                
                 if chanceErro <= 3:
                     print('Erro ao enviar mensagem!')
                 else:
@@ -92,23 +88,16 @@ class Motherboard:
                         print('Mensagem enviada com sucesso!')
                     except Exception as e:
                         print(f'Erro ao enviar mensagem: {e}')
-                
                 self.bateria -= 0.05
+
             else:
-                print(f'Mensagem maior que 200 bytes!\nTamanho da mensagem: {sys.getsizeof(jsonMessage)}')
-                
+                print(f'Mensagem maior que 200 bytes!\n')
                 print(f'Tentando comprimir a mensagem...')
-                
                 jsonMessage = self.compress(mensagem_data)
-                
                 print(f'Mensagem comprimida: {jsonMessage}')
-                
                 print(f'Bytes Mensagem Comprimida: {sys.getsizeof(jsonMessage)}')
-                
                 if sys.getsizeof(jsonMessage) <= 200:
-                    
                     chanceErro = random.randint(1, 100)
-                    
                     if chanceErro <= 3:
                         print('Erro ao enviar mensagem!')
                     else:
@@ -117,13 +106,32 @@ class Motherboard:
                             print('Mensagem enviada com sucesso!')
                         except Exception as e:
                             print(f'Erro ao enviar mensagem: {e}')
-                    
                     self.bateria -= 0.05
-                
-                else:
                     
+                else:    
                     print(f'Mensagem ainda maior que 200 bytes!\nTamanho da mensagem: {sys.getsizeof(jsonMessage)}')
                     print('Mensagem não enviada!')
+
+
+                # listData.append(sensor.valor)
+                # listIdSensor.append(sensor.idSensor)
+                
+            # mensagem_data = {
+            #     'vehicleId': self.sensores[0].fkVeiculo,
+            #     'sensorId': listIdSensor,
+            #     'registry': listData,
+            #     'battery': round(self.bateria, 2),
+            #     'dtColeta': str(datetime.now())
+            # }
+            
+            # jsonMessage = json.dumps(mensagem_data)
+            
+            # mensagem = Message(jsonMessage, content_encoding='utf-8', content_type='application/json')
+            
+            # print(f'Mensagen: {mensagem}')
+            # print(f'Bytes Mensagem: {sys.getsizeof(jsonMessage)}')
+            
+            
                 
         def cloud_run(self):
             while True:
@@ -132,18 +140,24 @@ class Motherboard:
                 time.sleep(60)
                 
         def local_run(self):
-            
-            data_arquivo = datetime.now().strftime('%d-%m-%Y-%H-%M-%S')
-            
+
             last_capture = datetime.now()
-            
+            data_arquivo = last_capture.strftime('%d-%m-%Y-%H-%M-%S')
             
             while True:
+
+                if last_capture.hour > 17 or last_capture.hour < 9:
+                    proximo_dia = last_capture + timedelta(days=1)
+                    proximo_dia = proximo_dia.strftime('%Y-%m-%d')
+                    last_capture = datetime.strptime(f'{proximo_dia} 09:00:00', '%Y-%m-%d %H:%M:%S')
+                data_arquivo = last_capture.strftime('%d-%m-%Y-%H-%M-%S')
+
+                path_execution = os.getcwd()
                 
-                with open(f'../data/dados_simulador-{data_arquivo}.json', 'w') as file:
+                with open(f'{path_execution}/python-simulator/data/dados_simulador-{data_arquivo}.json', 'w') as file:
                     file.write('[{"origin": "simulator", "version": "local_run", "destiny":"s3", "body": []}]')
                 
-                problemaMotor = random.randint(1, 300)
+                problemaMotor = random.randint(1, 50000)
                 
                 if problemaMotor == 67:
                     for x in self.sensores:
@@ -151,18 +165,8 @@ class Motherboard:
                             x.elevarFator()
                             
                             print(f'Fator elevado para o sensor {x.modelo}')
-                    
-                # if problemaPneu == 67:
-                #     for x in self.sensores:
-                #         if x.grupo == 'Pneu':
-                #             x.elevarFator()
-                            
-                #             print(f'Fator elevado para o sensor {x.modelo}')
                             
                 upOrDown = random.randint(1, 2)
-                
-                listData = []
-                listIdSensor = []
                 
                 frenagem = False
             
@@ -171,11 +175,9 @@ class Motherboard:
                     if x.modelo == 'VL53L0X':
                         x.generateValue(upOrDown, frenagem)
                     else:
-                        frenagem = x.generateValue(upOrDown)                
-                    # x.sendValueDb()
-                    listData.append(x.valor)
+                        frenagem = x.generateValue(upOrDown)
                     
-                    with open(f'../data/dados_simulador-{data_arquivo}.json', 'r') as file:
+                    with open(f'{path_execution}/python-simulator/data/dados_simulador-{data_arquivo}.json', 'r') as file:
                         dados = json.load(file)
                         
                         campo_dado = {
@@ -187,57 +189,24 @@ class Motherboard:
                         
                         dados[0]['body'].append(campo_dado)
                         
-                    with open(f'../data/dados_simulador-{data_arquivo}.json', 'w') as file:
+                    with open(f'{path_execution}/python-simulator/data/dados_simulador-{data_arquivo}.json', 'w') as file:
                         json.dump(dados, file)
-                    
-                    # with open(f'python-simulator/data/dados_simulador-{data_arquivo}.csv', 'a') as file:
-                    #     # file.write(f'{x.idSensor},{x.valor},{x.lastCaptureAt}\n')
-                    #     file.write(f'{x.idSensor};{x.modelo};{x.valor};{datetime.now()}\n')
-                        
                         
                 self.messageId += 1
-                
-                
-                    
-                message = {
-                    'm': self.messageId,
-                    'v': self.sensores[0].fkVeiculo,
-                    's': listIdSensor,
-                    'r': listData,
-                    'b': self.bateria
-                }
-                    
-                jsonMessage = json.dumps(message)
-                    
-                # print(f'Mensagen: {jsonMessage}')
-                    # print(f'Bytes Mensagem: {sys.getsizeof(jsonMessage)}\n')
-                    
-                # with open (f'dados-{datetime.now().date()}.json', 'w') as file:
-                #     file.write(jsonMessage)
                     
                 bucket_name = '3cco-autoplus-mq-bucket-raw'
+
+                dia_atual = last_capture.strftime('%d-%m-%Y')
                 
-                s3path = 'data/ec2'
+                s3path = f'data/ec2/{dia_atual}'
                 
                 formatacao_data = re.sub(r'[\s:]', '-', str(last_capture))
                 
                 s3 = boto3.client('s3')
-                s3.upload_file(f'../data/dados_simulador-{data_arquivo}.json', bucket_name, f'{s3path}/dados-{formatacao_data}.json')
+                s3.upload_file(f'{path_execution}/python-simulator/data/dados_simulador-{data_arquivo}.json', bucket_name, f'{s3path}/dados-{formatacao_data}.json')
                 
-                os.remove(f'../data/dados_simulador-{data_arquivo}.json')
-                
+                os.remove(f'{path_execution}/python-simulator/data/dados_simulador-{data_arquivo}.json')
+
+                last_capture += timedelta(minutes=5)
                     
-                msgCompressed = self.compress(jsonMessage)
-                    
-                    # print(f'Mensagem Comprimida: {msgCompressed}')
-                    # print(f'Bytes Mensagem Comprimida: {sys.getsizeof(msgCompressed)}\n')
-                    
-                msgDecompressed = self.descompress(msgCompressed)
-                    
-                    # print(f'Mensagem Descomprimida: {msgDecompressed}')
-                    # print(f'Bytes Mensagem Descomprimida: {sys.getsizeof(msgDecompressed)}\n')
-                    
-                last_capture = last_capture + timedelta(minutes=5)
-                    
-                    
-                time.sleep(0.1)
+                time.sleep(0.01)
