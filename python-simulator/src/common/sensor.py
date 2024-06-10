@@ -2,6 +2,7 @@ import random
 import time
 import common.conexao as conexao
 from datetime import datetime
+from .simulador_mpu import CarSimulator
 import json
 import sys
 import msgpack
@@ -108,102 +109,33 @@ class Sensor:
             novoValor = round(novoValor, 1)
             
         if "MPU" in self.modelo and self.unidadeMedida == 'm/s²':
-            self.last_acce = None
-            self.acce_range = (0, 25)
-            self.max_change_acce = 3
+            car_simulator = CarSimulator()
 
-            if self.last_acce is not None:
-                min_next_acce = max(self.last_acce - self.max_change_acce, self.acce_range[0])
-                max_next_acce = min(self.last_acce + self.max_change_acce, self.acce_range[1])
-                new_acce = random.uniform(min_next_acce, max_next_acce)
-            else:
-                new_acce = random.uniform(*self.acce_range)
+            car_simulator.simulate_speed()
 
-            novoValor = new_acce
+            new_acce = car_simulator.get_last_speed()
 
-            if self.valor is not None:
-                if self.last_acce is not None:
-                    temp_change = abs(new_acce - self.last_acce)
-                    if temp_change > self.max_change_acce:
-                        new_acce = self.last_acce + self.max_change_acce if new_acce > self.last_acce else self.last_acce - self.max_change_acce
-                else:
-                    new_acce = self.last_acce if self.last_acce is not None else new_acce
-
-            novoValor = new_acce
-
-            if self.valor is not None and abs(novoValor - self.valor) > self.max_change_acce:
-                if novoValor > self.valor:
-                    novoValor = self.valor + self.max_change_acce
-                else:
-                    novoValor = self.valor - self.max_change_acce
-
-            self.valor = novoValor
+            self.valor = new_acce
             self.last_temp = self.valor
             
         if "MPU" in self.modelo and self.unidadeMedida == 'rad/s':
-            self.last_speed = None
-            self.speed_range = (0, 20)
-            self.max_change_speed = 3
+            car_simulator = CarSimulator()
 
-            if self.last_speed is not None:
-                min_next_spped = max(self.last_speed - self.max_change_speed, self.speed_range[0])
-                max_next_speed = min(self.last_speed + self.max_change_speed, self.speed_range[1])
-                new_speed = random.uniform(min_next_spped, max_next_speed)
-            else:
-                new_speed = random.uniform(*self.speed_range)
+            car_simulator.simulate_speed()
 
-            novoValor = new_speed
+            new_veloc = car_simulator.get_last_speed()
 
-            if self.valor is not None:
-                if self.last_speed is not None:
-                    temp_change = abs(new_speed - self.last_speed)
-                    if temp_change > self.max_change_speed:
-                        new_speed = self.last_speed + self.max_change_speed if new_speed > self.last_speed else self.last_speed - self.max_change_speed
-                else:
-                    new_speed = self.last_speed if self.last_speed is not None else new_speed
-
-            novoValor = new_speed
-
-            if self.valor is not None and abs(novoValor - self.valor) > self.max_change_speed:
-                if novoValor > self.valor:
-                    novoValor = self.valor + self.max_change_speed
-                else:
-                    novoValor = self.valor - self.max_change_speed
-
-            self.valor = novoValor
+            self.valor = new_veloc
             self.last_temp = self.valor
 
         if "MPU" in self.modelo and self.unidadeMedida == 'ºC':
-            self.last_temp = None
-            self.temp_range = (-20, 85)
-            self.max_change_temp = 3
+            brake_pad_simulator = CarSimulator()
 
-            if self.last_temp is not None:
-                min_next_temp = max(self.last_temp - self.max_change_temp, self.temp_range[0])
-                max_next_temp = min(self.last_temp + self.max_change_temp, self.temp_range[1])
-                new_temp = random.uniform(min_next_temp, max_next_temp)
-            else:
-                new_temp = random.uniform(*self.temp_range)
+            brake_pad_simulator.update_temperature()
 
-            novoValor = new_temp
+            new_temp = brake_pad_simulator.get_last_temperature()
 
-            if self.valor is not None:
-                if self.last_temp is not None:
-                    temp_change = abs(new_temp - self.last_temp)
-                    if temp_change > self.max_change_temp:
-                        new_temp = self.last_temp + self.max_change_temp if new_temp > self.last_temp else self.last_temp - self.max_change_temp
-                else:
-                    new_temp = self.last_temp if self.last_temp is not None else new_temp
-
-            novoValor = new_temp
-
-            if self.valor is not None and abs(novoValor - self.valor) > self.max_change_temp:
-                if novoValor > self.valor:
-                    novoValor = self.valor + self.max_change_temp
-                else:
-                    novoValor = self.valor - self.max_change_temp
-
-            self.valor = novoValor
+            self.valor = new_temp
             self.last_temp = self.valor
             
         if "VL53L0X" in self.modelo:
