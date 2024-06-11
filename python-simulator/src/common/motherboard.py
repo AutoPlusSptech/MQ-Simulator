@@ -11,6 +11,7 @@ import re
 from datetime import datetime, timedelta
 import boto3
 import os
+import common.conexao as conexao
 
 class Motherboard:
         
@@ -141,10 +142,25 @@ class Motherboard:
                 
         def local_run(self):
 
-            last_capture = datetime.now()
+            db = conexao.Conexao('user_auto_plus', '62Fwbs[7pT#sc$sw', 'auto-plus-db-server.database.windows.net:1433', 'vehicle_monitoring')
+
+            data_cadastro_veiculo = db.execute('SELECT dt_cadastro FROM veiculo')
+
+            db.close()
+
+            print(f'Última captura: {data_cadastro_veiculo[0][0]}')
+
+            last_capture = data_cadastro_veiculo[0][0]
+
+            if last_capture < datetime.strptime('2024-06-30 23:59:59', '%Y-%m-%d %H:%M:%S'):
+                print('funciona')
+            else:
+                print('não funciona')
+
+            #last_capture = datetime.now()
             data_arquivo = last_capture.strftime('%d-%m-%Y-%H-%M-%S')
             
-            while True:
+            while last_capture < datetime.strptime('2024-06-30 23:59:59', '%Y-%m-%d %H:%M:%S'):
 
                 if last_capture.hour > 17 or last_capture.hour < 9:
                     proximo_dia = last_capture + timedelta(days=1)
@@ -209,4 +225,4 @@ class Motherboard:
 
                 last_capture += timedelta(minutes=5)
                     
-                time.sleep(0.01)
+                time.sleep(0.001)
